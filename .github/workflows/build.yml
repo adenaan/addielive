@@ -1,0 +1,35 @@
+name: Build Kodi Repo
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies (if any)
+        run: |
+          pip install -r requirements.txt || true
+
+      - name: Run repo generator
+        run: python _repo_generator.py
+
+      - name: Commit and push zips and metadata
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add repo/zips
+          git commit -m "Build addon zips and metadata" || echo "No changes to commit"
+          git push
