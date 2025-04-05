@@ -1,6 +1,6 @@
 # Fubuz's Kodi Repository
 
-This is a repository for the [DaddyLive](https://github.com/Fubuz/fubuz.github.io/tree/main/repo/plugin.video.daddylive) Kodi addon.
+This is a repository for the [DaddyLive](https://github.com/Fubuz/fubuz.github.io/tree/master/repo/plugin.video.daddylive) Kodi addon.
 
 ## How to Install
 
