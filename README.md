@@ -2,7 +2,7 @@
 
 This is a repository for the [DaddyLiveHD](https://github.com/Fubuz/fubuz.github.io/tree/master/repo/plugin.video.daddylivehd) Kodi addon.
 
-[Changelog] (https://github.com/Fubuz/fubuz.github.io/blob/master/repo/plugin.video.daddylive/changelog.txt)
+[Changelog](https://github.com/Fubuz/fubuz.github.io/blob/master/repo/plugin.video.daddylive/changelog.txt)
 
 ## How to Install
 
