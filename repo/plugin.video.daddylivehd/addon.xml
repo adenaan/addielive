@@ -11,7 +11,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <summary lang="en">Live Sports and TV</summary>
-		<description lang="en">Free streming of Live Sports and TV.</description>
+		<description lang="en">Free streaming of Live Sports and TV.</description>
         <license>GPL-3.0</license>
         <website>https://daddylive.sx/</website>
         <assets>
