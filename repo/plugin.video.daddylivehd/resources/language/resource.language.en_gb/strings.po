@@ -17,7 +17,7 @@ msgid "Live Sports and TV"
 msgstr ""
 
 msgctxt "Addon Description"
-msgid "Free streming of Live Sports and TV."
+msgid "Free streaming of Live Sports and TV."
 msgstr ""
 
 #. Category title
