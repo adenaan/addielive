@@ -48,6 +48,11 @@
           </constraints>
           <control type="spinner" format="string" />
 		</setting>
+		<setting id="dst_enabled" type="boolean" label="30118" help="30119">
+          <level>0</level>
+          <default>false</default>
+          <control type="toggle" />
+		</setting>
 	  </group>
 	</category>
 	<category id="advanced" label="30112">

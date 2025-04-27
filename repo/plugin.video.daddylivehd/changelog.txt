@@ -1,7 +1,16 @@
+v5.02:
+- Fixed issue with some sports events missing from the Daddylive add-on due to an erroneous schedule structure from the Daddylive website's schedule API.
+- Minimal improvement in menu loading speed of LIVE SPORTS/LIVE TV by adding a temporary memory cache at Kodi startup. Useful for underpowered devices.
+- Added settings toggle for Daylight Saving/Summer Time (DST). Toggle ON adds +1 hour to the Timezone.
+
+NOTE: The add-on comes as-is. Requests are not accepted.
+
+--------
+
 v5.01:
 - Changed the name to DaddyLiveHD so it doesn't overlap with other forks (you can install any other fork, or just uninstall the previous one).
 - Created a "Settings" shortcut as a category in the main menu.
-- Added a custom variable (string) in the "Advanced" settings for the following:
+- Added a custom variable in the "Advanced" settings for the following:
 	- Website URL
 	- Schedule URL 
 	- Video stream URL
@@ -16,7 +25,7 @@ Full website URL: https://daddylive.mp/
 Full schedule URL: https://daddylive.mp/schedule/schedule-generated.php
 Full video stream URL: https://zekonew.newkso.ru/zeko/premium62/mono.m3u8
 
-Example of what string the user has to enter in the addon settings:
+Example of what the user has to enter in the addon settings:
 Website URL: https://daddylive.mp/
 Schedule URL: schedule/schedule-generated.php
 Video stream URL: .newkso.ru

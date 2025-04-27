@@ -32,6 +32,13 @@ schedule_url = baseurl + schedule_path
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'
 FANART = addon.getAddonInfo('fanart')
 ICON = addon.getAddonInfo('icon')
+# Cache for schedule and live tv
+schedule_cache = None
+cache_timestamp = 0
+livetv_cache = None
+livetv_cache_timestamp = 0
+cache_duration = 600  # 10 minutes = 600 seconds
+
 
 
 def log(msg):
@@ -58,6 +65,43 @@ def log(msg):
             pass
 
 
+def preload_cache():
+    global schedule_cache, cache_timestamp
+    global livetv_cache, livetv_cache_timestamp
+
+    now = time.time()
+
+    # Preload LIVE SPORTS schedule
+    try:
+        hea = {
+            'User-Agent': UA,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Referer': baseurl,
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'DNT': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-GPC': '1'
+        }
+        response = requests.get(schedule_url, headers=hea, timeout=10)
+        if response.status_code == 200:
+            schedule_cache = response.json()
+            cache_timestamp = now
+    except Exception as e:
+        log(f"Failed to preload LIVE SPORTS schedule: {e}")
+
+    # Preload LIVE TV channels
+    try:
+        livetv_cache = channels(fetch_live=True)
+        livetv_cache_timestamp = now
+    except Exception as e:
+        log(f"Failed to preload LIVE TV channels: {e}")
+
+
 def clean_category_name(name):
     """Cleans up HTML entities from sport categories."""
     if isinstance(name, str):
@@ -67,10 +111,8 @@ def clean_category_name(name):
 
 
 def get_local_time(utc_time_str):
-    # Get the time format from the settings
     time_format = addon.getSetting('time_format')
 
-    # If no time format is selected, set default to '12h'
     if not time_format:
         time_format = '12h'
 
@@ -79,25 +121,24 @@ def get_local_time(utc_time_str):
     except TypeError:
         event_time_utc = datetime(*(time.strptime(utc_time_str, '%H:%M')[0:6]))
 
-    # Retrieve the selected timezone from the settings
     user_timezone = addon.getSetting('epg_timezone')
 
-    # If the user hasn't set a timezone, use a default (UTC+00)
     if not user_timezone:
-        user_timezone = 0  # Default timezone: UTC+00 (Greenwich Mean Time)
+        user_timezone = 0
     else:
         user_timezone = int(user_timezone)
 
-    # Timezone offset from UTC in minutes (example: UTC+3 -> 180 minutes, UTC-5 -> -300 minutes)
-    timezone_offset_minutes = user_timezone * 60
+    dst_enabled = addon.getSettingBool('dst_enabled')
+    if dst_enabled:
+        user_timezone += 1
 
+    timezone_offset_minutes = user_timezone * 60
     event_time_local = event_time_utc + timedelta(minutes=timezone_offset_minutes)
 
-    # Determine the time format (12h or 24h)
     if time_format == '12h':
-        local_time_str = event_time_local.strftime('%I:%M %p').lstrip('0')  # 12-hour format (AM/PM)
+        local_time_str = event_time_local.strftime('%I:%M %p').lstrip('0')
     else:
-        local_time_str = event_time_local.strftime('%H:%M')  # 24-hour format (HH:mm)
+        local_time_str = event_time_local.strftime('%H:%M')
 
     return local_time_str
 
@@ -150,6 +191,7 @@ def Main_Menu():
 
 
 def getCategTrans():
+    global schedule_cache, cache_timestamp
     hea = {
         'User-Agent': UA,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -166,25 +208,36 @@ def getCategTrans():
     }
     categs = []
 
+    now = time.time()
+
     try:
-        response = requests.get(schedule_url, headers=hea, timeout=10)
-        if response.status_code == 200:
-            # Print the raw response to inspect its content
-            print(response.text)  # For debugging
-            schedule = response.json()
-            for date_key, events in schedule.items():
-                for categ, events_list in events.items():
-                    # Clean category name here
-                    categ = clean_category_name(categ)
-                    categs.append((categ, json.dumps(events_list)))
+        # Use cache if it's still fresh
+        if schedule_cache and (now - cache_timestamp) < cache_duration:
+            schedule = schedule_cache
         else:
-            xbmcgui.Dialog().ok("Error", f"Failed to fetch data, status code: {response.status_code}")
-            return []
+            # Download fresh schedule
+            response = requests.get(schedule_url, headers=hea, timeout=10)
+            if response.status_code == 200:
+                schedule = response.json()
+                schedule_cache = schedule
+                cache_timestamp = now
+            else:
+                xbmcgui.Dialog().ok("Error", f"Failed to fetch data, status code: {response.status_code}")
+                return []
     except Exception as e:
         xbmcgui.Dialog().ok("Error", f"Error fetching category data: {e}")
         return []
 
+    try:
+        for date_key, events in schedule.items():
+            for categ, events_list in events.items():
+                categ = clean_category_name(categ)
+                categs.append((categ, json.dumps(events_list)))
+    except Exception as e:
+        log(f"Error parsing schedule: {e}")
+
     return categs
+
 
 
 def Menu_Trans():
@@ -198,10 +251,25 @@ def Menu_Trans():
 
 
 def ShowChannels(categ, channels_list):
+    # Special NBA filter for Basketball
+    if categ.lower() == 'basketball':
+        nba_channels = []
+        for item in channels_list:
+            title = item.get('title')
+            if 'NBA' in title.upper():
+                nba_channels.append(item)
+        
+        # Add NBA folder at the top
+        if nba_channels:
+            addDir('[NBA]', build_url({'mode': 'showNBA', 'trType': categ, 'nba_channels': json.dumps(nba_channels)}), True)
+
+    # Always add the full list (unfiltered)
     for item in channels_list:
         title = item.get('title')
         addDir(title, build_url({'mode': 'trList', 'trType': categ, 'channels': json.dumps(item.get('channels'))}), True)
+    
     closeDir()
+
 
 
 def getTransData(categ):
@@ -218,13 +286,18 @@ def getTransData(categ):
                 title = f'{event_time_local} {event}'
                 channels = item.get('channels')
                 
+                # Fix: Accept both list and dict structures
+                if isinstance(channels, dict):
+                    # Convert dict to list of dicts
+                    channels = list(channels.values())
+
                 if isinstance(channels, list) and all(isinstance(channel, dict) for channel in channels):
                     trns.append({
                         'title': title,
                         'channels': [{'channel_name': channel.get('channel_name'), 'channel_id': channel.get('channel_id')} for channel in channels]
                     })
                 else:
-                    log(f"Unexpected data structure in 'channels': {channels}")
+                    log(f"Unexpected data structure in 'channels' after conversion: {channels}")
 
     return trns
 
@@ -257,7 +330,15 @@ def list_gen():
     closeDir()
 
 
-def channels():
+def channels(fetch_live=False):
+
+    global livetv_cache, livetv_cache_timestamp
+
+    if not fetch_live:
+        now = time.time()
+        if livetv_cache and (now - livetv_cache_timestamp) < cache_duration:
+            return livetv_cache
+    
     url = baseurl + '/24-7-channels.php'
     do_adult = xbmcaddon.Addon().getSetting('adult_pw')
 
@@ -320,6 +401,7 @@ kodiversion = getKodiversion()
 mode = params.get('mode', None)
 
 if not mode:
+    preload_cache()
     Main_Menu()
 else:
     if mode == 'menu':
@@ -350,3 +432,8 @@ else:
     if mode == 'open_settings':
         xbmcaddon.Addon().openSettings()
         xbmcplugin.endOfDirectory(addon_handle)
+        
+    if mode == 'showNBA':
+        transType = params.get('trType')
+        nba_channels = json.loads(params.get('nba_channels'))
+        ShowChannels(transType, nba_channels)
