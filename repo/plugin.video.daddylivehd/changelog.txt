@@ -1,9 +1,15 @@
+v5.03:
+- Updated temp memory cache.
+- The fanart background of the add-on has been removed.
+
+NOTE: The add-on comes as-is. Requests are not accepted.
+
+--------
+
 v5.02:
 - Fixed issue with some sports events missing from the Daddylive add-on due to an erroneous schedule structure from the Daddylive website's schedule API.
 - Minimal improvement in menu loading speed of LIVE SPORTS/LIVE TV by adding a temporary memory cache at Kodi startup. Useful for underpowered devices.
 - Added settings toggle for Daylight Saving/Summer Time (DST). Toggle ON adds +1 hour to the Timezone.
-
-NOTE: The add-on comes as-is. Requests are not accepted.
 
 --------
 

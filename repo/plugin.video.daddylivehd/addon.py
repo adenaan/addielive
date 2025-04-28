@@ -37,7 +37,7 @@ schedule_cache = None
 cache_timestamp = 0
 livetv_cache = None
 livetv_cache_timestamp = 0
-cache_duration = 600  # 10 minutes = 600 seconds
+cache_duration = 900  # 15 minutes = 900 seconds
 
 
 
