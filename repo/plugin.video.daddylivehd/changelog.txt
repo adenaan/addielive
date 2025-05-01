@@ -1,8 +1,14 @@
+v5.04:
+- The add-on has been updated to reflect changes to daddylive website streams.
+- The 'Video stream URL' setting has been removed as it was deprecated.
+
+NOTE: The add-on comes as-is. Requests are not accepted.
+
+--------
+
 v5.03:
 - Updated temp memory cache.
 - The fanart background of the add-on has been removed.
-
-NOTE: The add-on comes as-is. Requests are not accepted.
 
 --------
 

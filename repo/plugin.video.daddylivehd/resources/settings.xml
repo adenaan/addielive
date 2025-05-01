@@ -73,14 +73,6 @@
 		  </constraints>
 		  <control type="edit" format="string" />
 		</setting>
-		<setting id="stream_path" type="string" label="30116" help="30117">
-		  <level>0</level>
-		  <default>.newkso.ru</default>
-		  <constraints>
-			<allowempty>true</allowempty>
-		  </constraints>
-		  <control type="edit" format="string" />
-		</setting>
       </group>
     </category>
     <category id="daddylive_pw" label="30106">

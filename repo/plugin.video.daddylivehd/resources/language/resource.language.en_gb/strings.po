@@ -102,12 +102,12 @@ msgstr ""
 
 #. Setting name
 msgctxt "#30116"
-msgid "Video stream URL:"
+msgid ""
 msgstr ""
 
 #. Description of setting
 msgctxt "#30117"
-msgid "Enter new video stream URL string (if the streams don't play). If you entered something by mistake, just use the button Defaults and OK."
+msgid ""
 msgstr ""
 
 #. Setting name
