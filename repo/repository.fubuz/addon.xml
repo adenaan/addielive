@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.fubuz" name="FubuZ Repository" version="1.0" provider-name="FubuZ">
-    <extension point="xbmc.addon.repository" name="FubuZ Repository">
-		<dir>
-			<info compressed="false">https://raw.githubusercontent.com/Fubuz/fubuz.github.io/master/repo/zips/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/Fubuz/fubuz.github.io/master/repo/zips/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/Fubuz/fubuz.github.io/master/repo/zips/</datadir>
-		</dir>
+<addon id="repository.fubuz" name="Addie Repository" version="1.0" provider-name="FubuZ">
+    <extension point="xbmc.addon.repository" name="Addie Repository">
+        <dir>
+            <info compressed="false">https://adenaan.github.io/addielive/zips/addons.xml</info>
+            <checksum>https://adenaan.github.io/addielive/zips/addons.xml.md5</checksum>
+            <datadir zip="true">https://adenaan.github.io/addielive/zips/</datadir>
+        </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary>FubuZ Repository</summary>
+        <summary>Addie Repository</summary>
         <description>Provides installation and automatic updates for DaddyLive Kodi addon.</description>
-		<disclaimer></disclaimer>
+        <disclaimer></disclaimer>
         <platform>all</platform>
-		<assets>
+        <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>
         </assets>
