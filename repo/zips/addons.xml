@@ -1,4 +1,3 @@
-<addons>
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="repository.fubuz" name="Addie Repository" version="1.0" provider-name="FubuZ">
     <extension point="xbmc.addon.repository" name="Addie Repository">
@@ -19,4 +18,3 @@
         </assets>
     </extension>
 </addon>
-</addons>
